@@ -1,14 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import SeasonDisplay from "./SeasonDisplay";
+import Spinner from './Spinner';
 
 class App extends React.Component {
-  // Initializing state using constructor
-  constructor(props) {
-    super(props);
+  // ONLY TIME WE DIRECTLY CHANGE STATE (Initializing)
+  state = { lat: null, errorMessage: '' };
 
-    // ONLY TIME WE DIRECTLY MANIPULATE THE STATE
-    this.state = { lat: null, errorMessage: "" };
-
+  // LifeCycle Method - DataLoading initial
+  componentDidMount() {
     window.navigator.geolocation.getCurrentPosition(
       position => {
         // We called setState to update
@@ -20,17 +20,26 @@ class App extends React.Component {
     );
   }
 
-  // React says we have to define render!!
-  render() {
+  // Helper function
+  renderContent() {
     if (this.state.errorMessage && !this.state.lat) {
       return <div>Error: {this.state.errorMessage}</div>;
     }
 
     if (!this.state.errorMessage && this.state.lat) {
-      return <div>Latitude: {this.state.lat}</div>;
+      return <SeasonDisplay lat={this.state.lat} />
     }
 
-    return <div>Loading!</div>;
+    return <Spinner message="Please accept location request..." />;
+  }
+
+  // React says we have to define render!!
+  render() {
+    return (
+      <div className="border red">
+        {this.renderContent()}
+      </div>
+    );
   }
 }
 
